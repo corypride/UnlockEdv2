@@ -197,6 +197,43 @@ export default function Navbar({
                                 </label>
                             </li>
                             <div className="divider mt-0 mb-0"></div>
+                            <li tabIndex={0} className="self-center collapse">
+                                <div className="rounded-box">
+                                    Feature Access Levels
+                                </div>
+                                <ul
+                                    tabIndex={0}
+                                    className="collapse-content menu bg-grey-2 dark:bg-grey-1 rounded-box z-50 w-52 p-2 shadow"
+                                >
+                                    <label>
+                                        <input
+                                            className="m-1"
+                                            type="checkbox"
+                                            name="access_level"
+                                            value={1}
+                                        />
+                                        Level 1
+                                    </label>
+                                    <label>
+                                        <input
+                                            className="m-1"
+                                            type="checkbox"
+                                            name="access_level"
+                                            value={2}
+                                        />
+                                        Level 2
+                                    </label>
+                                    <label>
+                                        <input
+                                            className="m-1"
+                                            type="checkbox"
+                                            name="access_level"
+                                            value={3}
+                                        />
+                                        Level 3
+                                    </label>
+                                </ul>
+                            </li>
                             <li className="self-center">
                                 <button
                                     onClick={() => {
