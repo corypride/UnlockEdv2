@@ -27,7 +27,7 @@ export interface User {
 }
 export const providerRoutes = [
     'provider-user-management',
-    'provider-platform-management',
+    'learning-platforms',
     'my-courses',
     'course-catalogue',
     'course-catalog-admin'
@@ -555,6 +555,13 @@ export interface AdminDashboardJoin {
     facility_name: string;
     hours_engaged: number;
     program_name: string;
+}
+
+export interface AdminLayer2Join {
+    courses_offered: Course[];
+    total_courses_offered: number;
+    total_students_enrolled: number;
+    total_hourly_activity: number;
 }
 
 export interface StudentDashboardJoin {

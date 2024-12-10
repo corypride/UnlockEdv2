@@ -17,7 +17,7 @@ func (srv *Server) registerDashboardRoutes() []routeDef {
 	return []routeDef{
 		{"GET /api/login-metrics", srv.handleLoginMetrics, true, models.Feature()},
 		{"GET /api/users/{id}/student-dashboard", srv.handleStudentDashboard, false, models.Feature()},
-		{"GET /api/users/{id}/admin-dashboard", srv.handleAdminDashboard, true, models.Feature()},
+		{"GET /api/users/{id}/admin-layer2", srv.handleAdminLayer2, true, models.Feature()},
 		{"GET /api/users/{id}/catalogue", srv.handleUserCatalogue, false, axx},
 		{"GET /api/users/{id}/courses", srv.handleUserCourses, false, axx},
 	}
@@ -38,7 +38,7 @@ func (srv *Server) handleStudentDashboard(w http.ResponseWriter, r *http.Request
 	return writeJsonResponse(w, http.StatusOK, studentDashboard)
 }
 
-func (srv *Server) handleAdminDashboard(w http.ResponseWriter, r *http.Request, log sLog) error {
+func (srv *Server) handleAdminLayer2(w http.ResponseWriter, r *http.Request, log sLog) error {
 	claims := r.Context().Value(ClaimsKey).(*Claims)
 	adminDashboard, err := srv.Db.GetAdminDashboardInfo(claims.FacilityID)
 	if err != nil {
