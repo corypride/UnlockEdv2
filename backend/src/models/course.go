@@ -88,6 +88,13 @@ type AdminDashboardJoin struct {
 	TopCourseActivity   []CourseActivity   `json:"top_course_activity"`
 }
 
+type AdminLayer2Join struct {
+	CoursesOffered        []Course `json:"courses_offered"`
+	TotalCoursesOffered   int64    `json:"total_courses_offered"`
+	TotalStudentsEnrolled int64    `json:"total_students_enrolled"`
+	TotalHourlyActivity   int64    `json:"total_hourly_activity"`
+}
+
 type CourseMilestones struct {
 	Name       string `json:"name"`
 	Milestones int    `json:"milestones"`

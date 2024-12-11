@@ -37,7 +37,7 @@ import {
 import Loading from './Components/Loading';
 import AuthenticatedLayout from './Layouts/AuthenticatedLayout.tsx';
 import { PathValueProvider } from '@/Context/PathValueCtx';
-import AdminLayer2 from './Pages/AdminDashboard.tsx';
+import AdminLayer2 from './Pages/AdminLayer2.tsx';
 import {
     getFacilities,
     getOpenContentDashboardData,

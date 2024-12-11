@@ -2,7 +2,7 @@ package database
 
 import (
 	"UnlockEdv2/src/models"
-	"math"
+	// "math"
 	"sort"
 	"time"
 
@@ -262,92 +262,123 @@ func (db *DB) GetStudentDashboardInfo(userID int, facilityID uint) (models.UserD
 
 	return models.UserDashboardJoin{Enrollments: enrollments, RecentCourses: recentCourses, TopCourses: topCourses, WeekActivity: activities}, err
 }
+func (db *DB) GetAdminLayer2Info(facilityID uint) (models.AdminLayer2Join, error) {
+	var adminLayer2 models.AdminLayer2Join
 
-func (db *DB) GetAdminDashboardInfo(facilityID uint) (models.AdminDashboardJoin, error) {
-	var dashboard models.AdminDashboardJoin
+	// total courses
+	err := db.Table("courses c").
+		Select("COUNT(DISTINCT c.id) as total_courses_offered").
+		Where("c.id = ?", facilityID).
+		Find(&adminLayer2.TotalCoursesOffered).Debug().Error
+	if err != nil {
+		return adminLayer2, NewDBError(err, "error getting admin dashboard info")
+	}
+	return adminLayer2, nil
+
+}
+
+func (db *DB) GetAdminDashboardInfo(facilityID uint) (models.AdminLayer2Join, error) {
+	// var dashboard models.AdminDashboardJoin
+	var adminLayer2 models.AdminLayer2Join
+
+	// total courses
+	err := db.Table("courses c").
+		Select("COUNT(DISTINCT c.id) as total_courses_offered").
+		Where("c.id = ?", facilityID).
+		Find(&adminLayer2.TotalCoursesOffered).Debug().Error
+	if err != nil {
+		return adminLayer2, NewDBError(err, "error getting admin dashboard info")
+	}
+	// total students
+	// total activity time
+
+	// list of courses offered
+	// numStudents
+	// completion rate
+	// activityTime
 
 	// facility name
-	err := db.Table("facilities f").
-		Select("f.name as facility_name").
-		Where("f.id = ?", facilityID).
-		Find(&dashboard.FacilityName).Error
-	if err != nil {
-		return dashboard, NewDBError(err, "error getting admin dashboard info")
-	}
+	// err = db.Table("facilities f").
+	// 	Select("f.name as facility_name").
+	// 	Where("f.id = ?", facilityID).
+	// 	Find(&dashboard.FacilityName).Error
+	// if err != nil {
+	// 	return dashboard, NewDBError(err, "error getting admin dashboard info")
+	// }
 
 	// Monthly Activity
-	if db.Dialector.Name() == "sqlite" {
-		err = db.Table("activities a").
-			Select("STRFTIME('%Y-%m-%d', a.created_at) as date, ROUND(SUM(a.time_delta) / 3600.0,2) as delta").
-			Joins("JOIN users u ON a.user_id = u.id").
-			Where("u.facility_id = ? AND a.created_at >= ?", facilityID, time.Now().AddDate(0, -1, 0)).
-			Group("STRFTIME('%Y-%m-%d', 'YYYY-MM-DD')").
-			Order("date ").
-			Find(&dashboard.MonthlyActivity).Error
+	// if db.Dialector.Name() == "sqlite" {
+	// 	err = db.Table("activities a").
+	// 		Select("STRFTIME('%Y-%m-%d', a.created_at) as date, ROUND(SUM(a.time_delta) / 3600.0,2) as delta").
+	// 		Joins("JOIN users u ON a.user_id = u.id").
+	// 		Where("u.facility_id = ? AND a.created_at >= ?", facilityID, time.Now().AddDate(0, -1, 0)).
+	// 		Group("STRFTIME('%Y-%m-%d', 'YYYY-MM-DD')").
+	// 		Order("date ").
+	// 		Find(&dashboard.MonthlyActivity).Error
 
-	} else {
-		err = db.Table("activities a").
-			Select("TO_CHAR(a.created_at, 'YYYY-MM-DD') as date, ROUND(SUM(a.time_delta) / 3600.0,2) as delta").
-			Joins("JOIN users u ON a.user_id = u.id").
-			Where("u.facility_id = ? AND a.created_at >= ?", facilityID, time.Now().AddDate(0, -1, 0)).
-			Group("TO_CHAR(a.created_at, 'YYYY-MM-DD')").
-			Order("date ").
-			Find(&dashboard.MonthlyActivity).Error
-	}
-	if err != nil {
-		return dashboard, NewDBError(err, "error getting admin dashboard info")
-	}
+	// } else {
+	// 	err = db.Table("activities a").
+	// 		Select("TO_CHAR(a.created_at, 'YYYY-MM-DD') as date, ROUND(SUM(a.time_delta) / 3600.0,2) as delta").
+	// 		Joins("JOIN users u ON a.user_id = u.id").
+	// 		Where("u.facility_id = ? AND a.created_at >= ?", facilityID, time.Now().AddDate(0, -1, 0)).
+	// 		Group("TO_CHAR(a.created_at, 'YYYY-MM-DD')").
+	// 		Order("date ").
+	// 		Find(&dashboard.MonthlyActivity).Error
+	// }
+	// if err != nil {
+	// 	return dashboard, NewDBError(err, "error getting admin dashboard info")
+	// }
 
 	// Weekly Active Users, Average Daily Activity, Total Weekly Activity
-	var result struct {
-		WeeklyActiveUsers   int64
-		AvgDailyActivity    float64
-		TotalWeeklyActivity int64
-	}
+	// var result struct {
+	// 	WeeklyActiveUsers   int64
+	// 	AvgDailyActivity    float64
+	// 	TotalWeeklyActivity int64
+	// }
 
-	err = db.Table("activities a").
-		Select(`
-			COUNT(DISTINCT a.user_id) as weekly_active_users, 
-			AVG(a.time_delta) as avg_daily_activity,
-			SUM(a.time_delta) as total_weekly_activity`).
-		Joins("JOIN users u ON a.user_id = u.id").
-		Where("u.facility_id = ? AND a.created_at >= ?", facilityID, time.Now().AddDate(0, 0, -7)).
-		Find(&result).Error
-	if err != nil {
-		log.Errorf("Query failed: %v", err)
-		return dashboard, NewDBError(err, "error getting admin dashboard info")
-	}
+	// err = db.Table("activities a").
+	// 	Select(`
+	// 		COUNT(DISTINCT a.user_id) as weekly_active_users,
+	// 		AVG(a.time_delta) as avg_daily_activity,
+	// 		SUM(a.time_delta) as total_weekly_activity`).
+	// 	Joins("JOIN users u ON a.user_id = u.id").
+	// 	Where("u.facility_id = ? AND a.created_at >= ?", facilityID, time.Now().AddDate(0, 0, -7)).
+	// 	Find(&result).Error
+	// if err != nil {
+	// 	log.Errorf("Query failed: %v", err)
+	// 	return dashboard, NewDBError(err, "error getting admin dashboard info")
+	// }
 
-	dashboard.WeeklyActiveUsers = int64(math.Abs(float64(result.WeeklyActiveUsers)))
-	dashboard.AvgDailyActivity = int64(math.Abs(result.AvgDailyActivity))
-	dashboard.TotalWeeklyActivity = int64(math.Abs(float64(result.TotalWeeklyActivity)))
+	// dashboard.WeeklyActiveUsers = int64(math.Abs(float64(result.WeeklyActiveUsers)))
+	// dashboard.AvgDailyActivity = int64(math.Abs(result.AvgDailyActivity))
+	// dashboard.TotalWeeklyActivity = int64(math.Abs(float64(result.TotalWeeklyActivity)))
 
 	// Course Milestones
-	err = db.Table("courses c").
-		Select("c.name as name, COUNT(m.id) as milestones").
-		Joins("INNER JOIN milestones m ON m.course_id = c.id AND m.created_at >= ?", time.Now().AddDate(0, 0, -7)).
-		Joins("INNER JOIN users u ON m.user_id = u.id AND u.facility_id = ?", facilityID).
-		Group("c.name").
-		Order("milestones DESC").
-		Limit(5).
-		Find(&dashboard.CourseMilestones).Error
-	if err != nil {
-		return dashboard, NewDBError(err, "error getting admin dashboard info")
-	}
+	// err = db.Table("courses c").
+	// 	Select("c.name as name, COUNT(m.id) as milestones").
+	// 	Joins("INNER JOIN milestones m ON m.course_id = c.id AND m.created_at >= ?", time.Now().AddDate(0, 0, -7)).
+	// 	Joins("INNER JOIN users u ON m.user_id = u.id AND u.facility_id = ?", facilityID).
+	// 	Group("c.name").
+	// 	Order("milestones DESC").
+	// 	Limit(5).
+	// 	Find(&dashboard.CourseMilestones).Error
+	// if err != nil {
+	// 	return dashboard, NewDBError(err, "error getting admin dashboard info")
+	// }
 
 	// Top 5 Courses by Hours Engaged
-	err = db.Table("activities a").
-		Select("c.name as course_name, c.alt_name as alt_name, SUM(a.time_delta) / 3600.0 as hours_engaged").
-		Joins("JOIN courses c ON a.course_id = c.id").
-		Joins("JOIN users u ON a.user_id = u.id").
-		Where("u.facility_id = ? AND a.created_at >= ?", facilityID, time.Now().AddDate(0, 0, -7)).
-		Group("c.id").
-		Order("hours_engaged DESC").
-		Limit(5).
-		Find(&dashboard.TopCourseActivity).Error
-	if err != nil {
-		return dashboard, NewDBError(err, "error getting admin dashboard info")
-	}
+	// err = db.Table("activities a").
+	// 	Select("c.name as course_name, c.alt_name as alt_name, SUM(a.time_delta) / 3600.0 as hours_engaged").
+	// 	Joins("JOIN courses c ON a.course_id = c.id").
+	// 	Joins("JOIN users u ON a.user_id = u.id").
+	// 	Where("u.facility_id = ? AND a.created_at >= ?", facilityID, time.Now().AddDate(0, 0, -7)).
+	// 	Group("c.id").
+	// 	Order("hours_engaged DESC").
+	// 	Limit(5).
+	// 	Find(&dashboard.TopCourseActivity).Debug().Error
+	// if err != nil {
+	// 	return dashboard, NewDBError(err, "error getting admin dashboard info")
+	// }
 
-	return dashboard, nil
+	return adminLayer2, nil
 }

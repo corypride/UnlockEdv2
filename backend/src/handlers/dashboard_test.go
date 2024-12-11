@@ -76,12 +76,12 @@ func TestHandleAdminDashboard(t *testing.T) {
 	}
 	for _, test := range httpTests {
 		t.Run(test.testName, func(t *testing.T) {
-			req, err := http.NewRequest(http.MethodGet, "/api/users/{id}/admin-dashboard", nil)
+			req, err := http.NewRequest(http.MethodGet, "/api/users/{id}/admin-layer2", nil)
 			if err != nil {
 				t.Fatalf("unable to create new request, error is %v", err)
 			}
 			req.SetPathValue("id", test.mapKeyValues["id"].(string))
-			handler := getHandlerByRoleWithMiddleware(server.handleAdminDashboard, test.role)
+			handler := getHandlerByRoleWithMiddleware(server.handleAdminLayer2, test.role)
 			rr := executeRequest(t, req, handler, test)
 			id, _ := strconv.Atoi(test.mapKeyValues["id"].(string))
 			if test.expectedStatusCode == http.StatusOK {

@@ -557,6 +557,13 @@ export interface AdminDashboardJoin {
     program_name: string;
 }
 
+export interface AdminLayer2Join {
+    courses_offered: Course[];
+    total_courses_offered: number;
+    total_students_enrolled: number;
+    total_hourly_activity: number;
+}
+
 export interface StudentDashboardJoin {
     enrollments: CurrentEnrollment[];
     recent_courses: RecentCourse[];
