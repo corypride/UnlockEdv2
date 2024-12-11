@@ -205,28 +205,6 @@ export default function AdminLayer2() {
                                 </table>
                             </div>
                         </div>
-                        {/* <div className="flex flex-row gap-6">
-                            <div className="flex-1">
-                                <ResponsiveContainer width="100%" height={300}>
-                                    <PeakLoginTimesChart
-                                        peak_login_times={
-                                            metrics?.peak_login_times
-                                        }
-                                    />
-                                </ResponsiveContainer>
-                            </div>
-                            <div className="flex-1">
-                                <ResponsiveContainer width="100%" height={350}>
-                                    <EngagementRateGraph
-                                        active={metrics?.active_users}
-                                        inactive={
-                                            metrics.total_users -
-                                            metrics.active_users
-                                        }
-                                    />
-                                </ResponsiveContainer>
-                            </div>
-                        </div> */}
                     </div>
                 </>
             )}
