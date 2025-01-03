@@ -1,13 +1,8 @@
 import { isAdministrator, useAuth } from '@/useAuth';
-// import MilestonesBarChart from '@/Components/MilestonesBarChart';
-// import ActivityChart from '@/Components/MonthActivityChart';
 import StatsCard from '@/Components/StatsCard';
-// import TopProgPieChart from '@/Components/TopProgActivityPieChart';
 import { AdminLayer2Join, Facility, ServerResponseOne } from '@/common';
 import useSWR from 'swr';
 // import convertSeconds from '@/Components/ConvertSeconds';
-// import { useContext } from 'react';
-// import { ThemeContext } from '@/Context/ThemeContext';
 import { AxiosError } from 'axios';
 import UnauthorizedNotFound from './Unauthorized';
 import { useEffect, useState } from 'react';
@@ -26,7 +21,7 @@ export default function AdminLayer2() {
     const { data, error, isLoading, mutate } = useSWR<
     ServerResponseOne<AdminLayer2Join>,
         AxiosError
-    >(`/api/users/${user?.id}/admin-layer2`);
+    >(`/api/users/${user?.id}/admin-layer2?facility=${facility}`);
 
     useEffect(() => {
         void mutate();
@@ -104,16 +99,16 @@ export default function AdminLayer2() {
                         <StatsCard
                             title="Total Courses Offered"
                             number={layer2_metrics.total_courses_offered.toString()}
-                            label="courses"
+                            label=""
                         />
                         <StatsCard
                             title="Total Students Enrolled"
-                            number={'99'}
-                            label={'n % of total'}
+                            number={layer2_metrics.total_students_enrolled.toString()}
+                            label={''}
                         />
                         <StatsCard
                             title="Total Activity Time"
-                            number={''}
+                            number={layer2_metrics.total_hourly_activity.toString()}
                             label="Hours"
                         />
                     </div>

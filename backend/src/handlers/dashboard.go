@@ -39,8 +39,25 @@ func (srv *Server) handleStudentDashboard(w http.ResponseWriter, r *http.Request
 }
 
 func (srv *Server) handleAdminLayer2(w http.ResponseWriter, r *http.Request, log sLog) error {
+	facility := r.URL.Query().Get("facility")
 	claims := r.Context().Value(ClaimsKey).(*Claims)
-	adminDashboard, err := srv.Db.GetAdminDashboardInfo(claims.FacilityID)
+	var facilityId *uint
+	// Logic goes here for facility
+	switch facility {
+	case "all":
+		facilityId = nil
+	case "":
+		facilityId = &claims.FacilityID
+	default:
+		facilityIdInt, err := strconv.Atoi(facility)
+		if err != nil {
+			return newInvalidIdServiceError(err, "facility")
+		}
+		ref := uint(facilityIdInt)
+		facilityId = &ref
+	}
+	
+	adminDashboard, err := srv.Db.GetAdminLayer2Info(facilityId)
 	if err != nil {
 		log.add("facilityId", claims.FacilityID)
 		return newDatabaseServiceError(err)
