@@ -269,15 +269,15 @@ func (db *DB) GetAdminLayer2Info(facilityID *uint) (models.AdminLayer2Join, erro
 	// TODO: find the link between coures and facility
 	err := db.Table("courses c").
 		Select("COUNT(DISTINCT c.id) as total_courses_offered").
-		// Where("c.id = ?", facilityID).
-		Find(&adminLayer2.TotalCoursesOffered).Debug().Error
+		// Where("something to link to here = ?", facilityID).
+		Find(&adminLayer2.TotalCoursesOffered).Error
 	if err != nil {
 		return adminLayer2, NewDBError(err, "error getting admin dashboard info")
 	}
 	
 	// total_students_enrolled
 	subQry :=  db.Table("courses c").
-	Select("COUNT(DISTINCT m.user_id) AS course_count, c.name").
+	Select("COUNT(DISTINCT m.user_id) AS students_enrolled, c.name").
 	Joins("LEFT JOIN milestones m ON m.course_id = c.id").
 	Joins("inner join users u on m.user_id = u.id").
 	Where("m.type = ?", "enrollment")
@@ -289,24 +289,32 @@ func (db *DB) GetAdminLayer2Info(facilityID *uint) (models.AdminLayer2Join, erro
 	subQry = subQry.Group("c.name")
 
 	err = db.Table("(?) as sub", subQry).
-		Select("CASE WHEN SUM(course_count) IS NULL THEN 0 ELSE SUM(course_count) end AS sum").
-		Scan(&adminLayer2.TotalStudentsEnrolled).Error
-		
+		Select("CASE WHEN SUM(students_enrolled) IS NULL THEN 0 ELSE SUM(students_enrolled) end AS sum").
+		Scan(&adminLayer2.TotalStudentsEnrolled).Debug().Error
+
 	if err != nil {
-		return adminLayer2, NewDBError(err, "error getting admin dashboard info")
+		return adminLayer2, NewDBError(err, "error getting total_students_enrolled dashboard info")
 	}
 
 	// total_hourly_activity
-	err = db.Table("users u").
-		Select("CASE WHEN SUM(a.total_time) IS NULL THEN 0 ELSE ROUND(SUM(a.total_time)/3600, 0) END AS total_time").
-		Joins("LEFT JOIN activities a ON u.id = a.user_id").
-		Where("u.role = ?", "student").
-		Group("u.id").
-		Find(&adminLayer2.TotalHourlyActivity).Error
+	subQry = db.Table("users u").
+	Select("CASE WHEN SUM(a.total_time) IS NULL THEN 0 ELSE ROUND(SUM(a.total_time)/3600, 0) END AS total_time").
+	Joins("LEFT JOIN activities a ON u.id = a.user_id").
+	Where("u.role = ?", "student")
+
+	if facilityID != nil {
+		subQry = subQry.Where(" u.facility_id = ?",facilityID)
+	}
+	subQry = subQry.Group("u.id")
+
+	err = subQry.Find(&adminLayer2.TotalHourlyActivity).Error
 
 	if err != nil {
 		return adminLayer2, NewDBError(err, "error getting admin dashboard info")
 	}
+
+	
+
 	return adminLayer2, nil
 
 }
@@ -319,7 +327,7 @@ func (db *DB) GetAdminDashboardInfo(facilityID uint) (models.AdminLayer2Join, er
 	err := db.Table("courses c").
 		Select("COUNT(DISTINCT c.id) as total_courses_offered").
 		Where("c.id = ?", facilityID).
-		Find(&adminLayer2.TotalCoursesOffered).Debug().Error
+		Find(&adminLayer2.TotalCoursesOffered).Error
 	if err != nil {
 		return adminLayer2, NewDBError(err, "error getting admin dashboard info")
 	}

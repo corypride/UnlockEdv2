@@ -88,6 +88,12 @@ type AdminDashboardJoin struct {
 	TopCourseActivity   []CourseActivity   `json:"top_course_activity"`
 }
 
+// type LinkedInsight struct {
+
+
+// }
+
+
 type AdminLayer2Join struct {
 	CoursesOffered        []Course `json:"courses_offered"`
 	TotalCoursesOffered   int64    `json:"total_courses_offered"`
