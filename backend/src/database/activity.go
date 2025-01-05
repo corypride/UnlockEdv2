@@ -315,6 +315,7 @@ func (db *DB) GetAdminDashboardInfo(facilityID *uint) (models.AdminLayer2Join, e
 	}
 
 	// learning_insights
+	// TODO: add the completion percentage
 	err = db.Table("courses c").
 		Select(`
 			c.name AS course_name,

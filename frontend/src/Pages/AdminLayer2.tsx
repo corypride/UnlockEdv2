@@ -1,6 +1,11 @@
 import { isAdministrator, useAuth } from '@/useAuth';
 import StatsCard from '@/Components/StatsCard';
-import { AdminLayer2Join, Facility, LearningInsight, ServerResponseOne } from '@/common';
+import {
+    AdminLayer2Join,
+    Facility,
+    LearningInsight,
+    ServerResponseOne
+} from '@/common';
 import useSWR from 'swr';
 // import convertSeconds from '@/Components/ConvertSeconds';
 import { AxiosError } from 'axios';
@@ -148,24 +153,34 @@ export default function AdminLayer2() {
                                         </tr>
                                     </thead>
                                     <tbody className="flex flex-col gap-4 mt-4">
-                                    {layer2_metrics.learningInsights?.map((
-                                        insight: LearningInsight,
-                                        index: number
-                                        ) =>{
-                                            return  (
-                                                <tr
-                                                    className="flex flex-row justify-between body-small items-center"
-                                                    key={index}
-                                                >
-                                                    <td className="w-1/2">
-                                                        {insight.course_name}
-                                                    </td>
-                                                    <td  className="w-1/2">500</td>
-                                                    <td  className="w-1/2">78%</td>
-                                                    <td  className="w-1/2">5675657</td>
-                                                </tr>
-                                                )}
-                                            )}
+                                        {layer2_metrics.learningInsights?.map(
+                                            (
+                                                insight: LearningInsight,
+                                                index: number
+                                            ) => {
+                                                return (
+                                                    <tr
+                                                        className="flex flex-row justify-between body-small items-center"
+                                                        key={index}
+                                                    >
+                                                        <td className="w-1/2">
+                                                            {
+                                                                insight.course_name
+                                                            }
+                                                        </td>
+                                                        <td className="w-1/2">
+                                                            500
+                                                        </td>
+                                                        <td className="w-1/2">
+                                                            78%
+                                                        </td>
+                                                        <td className="w-1/2">
+                                                            5675657
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            }
+                                        )}
                                     </tbody>
                                 </table>
                             </div>
