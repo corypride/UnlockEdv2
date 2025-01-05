@@ -1,25 +1,25 @@
 import { isAdministrator, useAuth } from '@/useAuth';
 import StatsCard from '@/Components/StatsCard';
-import { AdminLayer2Join, Facility, ServerResponseOne } from '@/common';
+import { AdminLayer2Join, Facility, LearningInsight, ServerResponseOne } from '@/common';
 import useSWR from 'swr';
 // import convertSeconds from '@/Components/ConvertSeconds';
 import { AxiosError } from 'axios';
 import UnauthorizedNotFound from './Unauthorized';
 import { useEffect, useState } from 'react';
 import API from '@/api/api';
-import DropdownControl from '@/Components/inputs/DropdownControl';
+// import DropdownControl from '@/Components/inputs/DropdownControl';
 
 export default function AdminLayer2() {
     const { user } = useAuth();
     const [facilities, setFacilities] = useState<Facility[]>();
     const [facility, setFacility] = useState('all');
     const [resetCache, setResetCache] = useState(false);
-    const [filterCourses, setFilterCourses] = useState<number>(0);
-    const [sortCourses, setSortCourses] = useState<string>(
-        'order=asc&order_by=course_name'
-    );
+    // const [filterCourses, setFilterCourses] = useState<number>(0);
+    // const [sortCourses, setSortCourses] = useState<string>(
+    //     'order=asc&order_by=course_name'
+    // );
     const { data, error, isLoading, mutate } = useSWR<
-    ServerResponseOne<AdminLayer2Join>,
+        ServerResponseOne<AdminLayer2Join>,
         AxiosError
     >(`/api/users/${user?.id}/admin-layer2?facility=${facility}`);
 
@@ -36,19 +36,19 @@ export default function AdminLayer2() {
     }, []);
     const layer2_metrics = data?.data;
 
-    function handleSortCourses(value: string) {
-        const defaultSort = 'order=asc&order_by=course_name';
-        if (value == 'completed') {
-            setFilterCourses(1);
-            setSortCourses(defaultSort);
-        } else if (value == 'in_progress') {
-            setFilterCourses(-1);
-            setSortCourses(defaultSort);
-        } else {
-            setFilterCourses(0);
-            setSortCourses(value);
-        }
-    }
+    // function handleSortCourses(value: string) {
+    //     const defaultSort = 'order=asc&order_by=course_name';
+    //     if (value == 'completed') {
+    //         setFilterCourses(1);
+    //         setSortCourses(defaultSort);
+    //     } else if (value == 'in_progress') {
+    //         setFilterCourses(-1);
+    //         setSortCourses(defaultSort);
+    //     } else {
+    //         setFilterCourses(0);
+    //         setSortCourses(value);
+    //     }
+    // }
 
     if (error || isLoading || !user) return <div></div>;
     if (!isAdministrator(user)) {
@@ -116,8 +116,8 @@ export default function AdminLayer2() {
                         <div className="flex flex-row gap-12">
                             <div className="card bg-base-teal h-[531px] w-full p-4 overflow-y-auto">
                                 <div className="flex flex-row justify-between">
-                                    <h2 className="mt-2">All Courses</h2>
-                                    <DropdownControl
+                                    <h2 className="mt-2">Course Metrics</h2>
+                                    {/* <DropdownControl
                                         label="Sort by"
                                         customCallback={handleSortCourses}
                                         enumType={{
@@ -128,74 +128,44 @@ export default function AdminLayer2() {
                                                 'order=desc&order_by=total_time'
                                             //"Grade": "order=asc&order_by=grade",
                                         }}
-                                    />
+                                    /> */}
                                 </div>
                                 <table className="w-full mt-4">
                                     <thead>
                                         <tr className="flex flex-row justify-between border border-x-0 border-t-0 body text-grey-4 text-left">
                                             <th className="w-1/2">
-                                                Total Students Enrolled
+                                                Course Name
+                                            </th>
+                                            <th className="w-1/5">
+                                                # Students Enrolled
                                             </th>
                                             <th className="w-1/5">
                                                 Completion Rate
                                             </th>
                                             <th className="w-1/5">
-                                                Total Hours Spent
+                                                Total Activity Hours
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody className="flex flex-col gap-4 mt-4">
-                                        {filterCourses}
-                                        {sortCourses}
-                                        {/* {courseData.courses.map(
-                                        (
-                                            course: UserCourses,
-                                            index: number
-                                        ) => {
-                                            const courseTotalTime =
-                                                convertSeconds(
-                                                    course.total_time
-                                                );
-                                            if (
-                                                filterCourses == 1 &&
-                                                course.course_progress < 100
-                                            ) {
-                                                return;
-                                            } else if (
-                                                filterCourses == -1 &&
-                                                course.course_progress == 100
-                                            ) {
-                                                return;
-                                            }
-                                            return (
+                                    {layer2_metrics.learningInsights?.map((
+                                        insight: LearningInsight,
+                                        index: number
+                                        ) =>{
+                                            return  (
                                                 <tr
                                                     className="flex flex-row justify-between body-small items-center"
                                                     key={index}
                                                 >
                                                     <td className="w-1/2">
-                                                        {course.course_name}
+                                                        {insight.course_name}
                                                     </td>
-                                                    <td className="w-1/5 flex">
-                                                        {course.course_progress ==
-                                                        100 ? (
-                                                            <DarkGreenPill>
-                                                                completed
-                                                            </DarkGreenPill>
-                                                        ) : (
-                                                            <TealPill>
-                                                                in progress
-                                                            </TealPill>
-                                                        )}
-                                                    </td>
-                                                    <td className="w-1/5">
-                                                        {courseTotalTime.number +
-                                                            ' ' +
-                                                            courseTotalTime.label}
-                                                    </td>
+                                                    <td  className="w-1/2">500</td>
+                                                    <td  className="w-1/2">78%</td>
+                                                    <td  className="w-1/2">5675657</td>
                                                 </tr>
-                                            );
-                                        }
-                                    )} */}
+                                                )}
+                                            )}
                                     </tbody>
                                 </table>
                             </div>

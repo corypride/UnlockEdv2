@@ -56,8 +56,8 @@ func (srv *Server) handleAdminLayer2(w http.ResponseWriter, r *http.Request, log
 		ref := uint(facilityIdInt)
 		facilityId = &ref
 	}
-	
-	adminDashboard, err := srv.Db.GetAdminLayer2Info(facilityId)
+
+	adminDashboard, err := srv.Db.GetAdminDashboardInfo(facilityId)
 	if err != nil {
 		log.add("facilityId", claims.FacilityID)
 		return newDatabaseServiceError(err)

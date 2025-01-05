@@ -556,18 +556,18 @@ export interface AdminDashboardJoin {
     hours_engaged: number;
     program_name: string;
 }
-export interface LearningInsight{
+export interface LearningInsight {
     course_name: string;
-    total_enrolled:number;
-    total_activity_time: number;
+    total_students_enrolled: number;
+    // completion_rate: number
+    activity_hours: number;
 }
 
 export interface AdminLayer2Join {
-    courses_offered: Course[];
     total_courses_offered: number;
     total_students_enrolled: number;
     total_hourly_activity: number;
-    // learningInsight: LearningInsight[]
+    learningInsights: LearningInsight[];
 }
 
 export interface StudentDashboardJoin {

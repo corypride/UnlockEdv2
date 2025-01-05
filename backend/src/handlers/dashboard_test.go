@@ -85,12 +85,13 @@ func TestHandleAdminDashboard(t *testing.T) {
 			rr := executeRequest(t, req, handler, test)
 			id, _ := strconv.Atoi(test.mapKeyValues["id"].(string))
 			if test.expectedStatusCode == http.StatusOK {
-				dashboard, err := server.Db.GetAdminDashboardInfo(uint(id))
+				id := uint(id)
+				dashboard, err := server.Db.GetAdminDashboardInfo(&id)
 				if err != nil {
 					t.Fatalf("unable to get student dashboard, error is %v", err)
 				}
 				received := rr.Body.String()
-				resource := models.Resource[models.AdminDashboardJoin]{}
+				resource := models.Resource[models.AdminLayer2Join]{}
 				if err := json.Unmarshal([]byte(received), &resource); err != nil {
 					t.Errorf("failed to unmarshal resource, error is %v", err)
 				}
