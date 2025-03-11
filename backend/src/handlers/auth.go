@@ -133,8 +133,10 @@ func (srv *Server) adminMiddleware(next http.Handler) http.Handler {
 			srv.errorResponse(w, http.StatusUnauthorized, "Unauthorized - not admin")
 			return
 		}
-
-		ctx := context.WithValue(r.Context(), AuditKey, struct{}{})
+		ctx := r.Context()
+		if r.Method != http.MethodGet {
+			ctx = context.WithValue(r.Context(), AuditKey, struct{}{})
+		}
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
